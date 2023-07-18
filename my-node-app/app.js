@@ -1,16 +1,18 @@
 const express = require('express');
+const path = require('path');
+const bodyParser = require('body-parser');
 
 const app = express();
 
-app.use('/users', (req, res, next) => {
-    console.log('In the users!');
-    res.send('<h1>Hello from users!</h1>');
-})
+app.use(bodyParser.urlencoded({extended: false}));
+app.use(express.static(path.join(__dirname, 'public')));
 
-app.use('/',(req,res, next) => {
-    console.log('In another middleware!');
-    res.send('<h1>Hello from Express!</h1>');
-})
+const homeRoutes = require('./routes/home');
+const usersRoutes = require('./routes/users');
+
+app.use(homeRoutes);
+app.use(usersRoutes);
+
 
 app.listen(3000);
 ;
