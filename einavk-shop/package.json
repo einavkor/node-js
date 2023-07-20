@@ -6,12 +6,19 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "nodemon app.js",
-    "start-server": "node app.js"
+    "start-server": "node app.js",
+    "format:check": "prettier --check .",
+    "format:write": "prettier --write .",
+    "lint:check": "eslint .",
+    "lint:fix": "eslint --fix ."
   },
   "author": "Einav Koren",
   "license": "ISC",
   "devDependencies": {
-    "nodemon": "^1.18.3"
+    "eslint": "^8.45.0",
+    "eslint-config-prettier": "^8.8.0",
+    "nodemon": "^1.18.3",
+    "prettier": "^3.0.0"
   },
   "dependencies": {
     "body-parser": "^1.18.3",
