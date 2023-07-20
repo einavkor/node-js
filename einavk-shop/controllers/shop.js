@@ -1,3 +1,5 @@
+/* eslint-disable no-unused-vars */
+/* eslint-disable no-console */
 const Product = require('../models/product');
 
 exports.getProducts = (req, res, next) => {
@@ -10,6 +12,7 @@ exports.getProducts = (req, res, next) => {
       });
     })
     .catch((err) => {
+      // eslint-disable-next-line no-console
       console.log(err);
     });
 };
@@ -51,6 +54,7 @@ exports.getCart = (req, res, next) => {
         products: products,
       });
     })
+    // eslint-disable-next-line no-console
     .catch((err) => console.log(err));
 };
 
@@ -69,14 +73,7 @@ exports.postCart = (req, res, next) => {
 exports.postCartDeleteProduct = (req, res, next) => {
   const prodId = req.body.productId;
   req.user
-    .getCart()
-    .then((cart) => {
-      return cart.getProducts({ where: { id: prodId } });
-    })
-    .then((products) => {
-      const product = products[0];
-      return product.cartItem.destroy();
-    })
+    .deleteItemFromCart(prodId)
     .then((result) => {
       res.redirect('/cart');
     })

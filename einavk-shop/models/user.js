@@ -1,5 +1,6 @@
-const mongodb = require("mongodb");
-const getDb = require("../util/database").getDb;
+/* eslint-disable no-console */
+const mongodb = require('mongodb');
+const getDb = require('../util/database').getDb;
 
 const ObjectId = mongodb.ObjectId;
 
@@ -32,7 +33,7 @@ class User {
     };
     const db = getDb();
     return db
-      .collection("users")
+      .collection('users')
       .updateOne(
         { _id: new ObjectId(this._id) },
         { $set: { cart: updatedCart } }
@@ -45,7 +46,7 @@ class User {
       return item.productId;
     });
     return db
-      .collection("products")
+      .collection('products')
       .find({
         _id: {
           $in: productIds,
@@ -69,10 +70,10 @@ class User {
     let dbOp;
     if (this._id) {
       dbOp = db
-        .collection("users")
+        .collection('users')
         .updateOne({ _id: this._id }, { $set: this });
     } else {
-      dbOp = db.collection("users").insertOne(this);
+      dbOp = db.collection('users').insertOne(this);
     }
     return dbOp
       .then((result) => {
@@ -83,10 +84,23 @@ class User {
       });
   }
 
+  deleteItemFromCart(productId) {
+    const updatedCartItems = this.cart.items.filter((item) => {
+      return item.productId.toString() !== productId.toString();
+    });
+    const db = getDb();
+    return db
+      .collection('users')
+      .updateOne(
+        { _id: new ObjectId(this._id) },
+        { $set: { cart: { items: updatedCartItems } } }
+      );
+  }
+
   static findById(userId) {
     const db = getDb();
     return db
-      .collection("users")
+      .collection('users')
       .findOne({ _id: mongodb.ObjectId(userId) })
       .then((user) => {
         console.log(user);
