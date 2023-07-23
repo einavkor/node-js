@@ -102,7 +102,7 @@ exports.postOrder = (req, res, next) => {
       return order.save();
     })
     .then((result) => {
-      return req.session.user.clearCart();
+      return req.user.clearCart();
     })
     .then((result) => {
       res.redirect('/orders');

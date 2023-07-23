@@ -25,3 +25,11 @@ exports.postLogin = (req, res, next) => {
     .catch((err) => console.log(err));
   req.session.isLoggedIn = true;
 };
+
+exports.postLogout = (req, res, next) => {
+  req.session.destroy((err) => {
+    // eslint-disable-next-line no-console
+    console.log(err);
+    res.redirect('/');
+  });
+};
