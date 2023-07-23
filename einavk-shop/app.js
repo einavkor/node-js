@@ -38,15 +38,18 @@ app.use(
   })
 );
 
-// app.use((req, res, next) => {
-//   User.findById('64bacc5af7c23fec12a9143c')
-//     .then((user) => {
-//       req.user = user; // mongoose will take the id from the user object
-//       next();
-//     })
-//     // eslint-disable-next-line no-console
-//     .catch((err) => console.log(err));
-// });
+app.use((req, res, next) => {
+  if (!req.session.user) {
+    return next();
+  }
+  User.findById(req.session.user._id)
+    .then((user) => {
+      req.user = user;
+      next();
+    })
+    // eslint-disable-next-line no-console
+    .catch((err) => console.log(err));
+});
 
 app.use('/admin', adminRoutes);
 app.use(shopRoutes);

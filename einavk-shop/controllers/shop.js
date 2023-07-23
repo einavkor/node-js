@@ -49,7 +49,7 @@ exports.getIndex = (req, res, next) => {
 };
 
 exports.getCart = (req, res, next) => {
-  req.session.user
+  req.user
     .populate('cart.items.productId')
     // .execPopulate()
     .then((user) => {
@@ -70,7 +70,7 @@ exports.postCart = (req, res, next) => {
   const prodId = req.body.productId;
   Product.findById(prodId)
     .then((product) => {
-      req.session.user.addToCart(product);
+      req.user.addToCart(product);
       res.redirect('/cart');
     })
     .then((result) => {
@@ -80,7 +80,7 @@ exports.postCart = (req, res, next) => {
 
 exports.postCartDeleteProduct = (req, res, next) => {
   const prodId = req.body.productId;
-  req.session.user
+  req.user
     .deleteItemFromCart(prodId)
     .then((result) => {
       res.redirect('/cart');
@@ -89,7 +89,7 @@ exports.postCartDeleteProduct = (req, res, next) => {
 };
 
 exports.postOrder = (req, res, next) => {
-  req.session.user
+  req.user
     .populate('cart.items.productId')
     .then((user) => {
       const products = user.cart.items.map((item) => {
