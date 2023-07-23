@@ -8,31 +8,49 @@ const mongoose = require('mongoose');
 const errorController = require('./controllers/error');
 // const mongoConnect = require('./util/database').mongoConnect;
 const User = require('./models/user');
+const session = require('express-session');
+const MongoDBStore = require('connect-mongodb-session')(session);
+const MONGODB_URI =
+  'mongodb+srv://einavk92:lAMoBGhs4vdSW17e@cluster0.px2nc5l.mongodb.net/shop?retryWrites=true&w=majority';
 
 const app = express();
+const store = new MongoDBStore({
+  uri: MONGODB_URI,
+  collection: 'sessions',
+});
 
 app.set('view engine', 'ejs');
 app.set('views', 'views');
 
 const adminRoutes = require('./routes/admin');
 const shopRoutes = require('./routes/shop');
+const authRoutes = require('./routes/auth');
 
 app.use(bodyParser.urlencoded({ extended: false }));
 // eslint-disable-next-line no-undef
 app.use(express.static(path.join(__dirname, 'public')));
+app.use(
+  session({
+    secret: 'my secret',
+    resave: false,
+    saveUninitialized: false,
+    store: store,
+  })
+);
 
-app.use((req, res, next) => {
-  User.findById('64bacc5af7c23fec12a9143c')
-    .then((user) => {
-      req.user = user; // mongoose will take the id from the user object
-      next();
-    })
-    // eslint-disable-next-line no-console
-    .catch((err) => console.log(err));
-});
+// app.use((req, res, next) => {
+//   User.findById('64bacc5af7c23fec12a9143c')
+//     .then((user) => {
+//       req.user = user; // mongoose will take the id from the user object
+//       next();
+//     })
+//     // eslint-disable-next-line no-console
+//     .catch((err) => console.log(err));
+// });
 
 app.use('/admin', adminRoutes);
 app.use(shopRoutes);
+app.use(authRoutes);
 
 app.use(errorController.get404);
 
@@ -40,9 +58,7 @@ app.use(errorController.get404);
 //   app.listen(3000);
 // });
 mongoose
-  .connect(
-    'mongodb+srv://einavk92:lAMoBGhs4vdSW17e@cluster0.px2nc5l.mongodb.net/shop?retryWrites=true&w=majority'
-  )
+  .connect(MONGODB_URI)
   .then((result) => {
     User.findOne().then((user) => {
       if (!user) {
