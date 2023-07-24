@@ -19,7 +19,11 @@ exports.postLogin = (req, res, next) => {
     .then((user) => {
       req.session.user = user; // mongoose will take the id from the user object
       req.session.isLoggedIn = true;
-      res.redirect('/');
+      req.session.save((err) => {
+        // eslint-disable-next-line no-console
+        console.log(err);
+        res.redirect('/');
+      });
     })
     // eslint-disable-next-line no-console
     .catch((err) => console.log(err));
